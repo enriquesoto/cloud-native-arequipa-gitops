@@ -1,0 +1,28 @@
+# apps/wordpress/helmrelease.yaml
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wordpress
+  namespace: bitnami
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: wordpress              # nombre del chart dentro del repo OCI
+      # version: "23.2.8"           # opcional: fija versión del chart (recomendado en prod)
+      sourceRef:
+        kind: HelmRepository
+        name: bitnami-oci
+        namespace: flux-system
+  values:
+    service:
+      type: LoadBalancer            # o ClusterIP + Ingress, como prefieras
+    persistence:
+      enabled: true
+      size: 20Gi
+      # storageClass: "<tu-sc>"     # si no quieres la default
+    mariadb:
+      primary:
+        persistence:
+          size: 10Gi
+      enabled: true 
